@@ -10,7 +10,6 @@ def home():
         output += task.task_name + " " + task.task_description + " <br>" 
     return output
 
-
 @app.route('/add/<name>')
 def add(name):
     new_task = Tasks(task_name = name, task_description = 'new task')
