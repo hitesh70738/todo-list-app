@@ -14,7 +14,7 @@ class TestBase(TestCase):
 
     def setUp(self):
         db.create_all() 
-        test_task = Tasks(task_description="Test the flask app")
+        test_task = Tasks(task_name="test flask", task_description="Test the flask app")
         db.session.add(test_task)
         db.session.commit()
 
@@ -24,7 +24,7 @@ class TestBase(TestCase):
 
 class TestViews(TestBase):
     def test_home_get(self):
-        response = self.client.get(url_for('home'))
+        response = self.client.get(url_for("home"))
         self.assertEqual(response.status_code, 200)
     
     def test_create_get(self):
@@ -50,12 +50,12 @@ class TestViews(TestBase):
 class TestRead(TestBase):
     def test_read_tasks(self):
         response = self.client.get(url_for("home"))
-        self.assertin(b"Test the Flask app", response.data)
+        self.assertIn(b"Test the flask app", response.data)
 
 class TestCreate(TestBase):
     def test_create_task(self):
         response = self.client.post(url_for("create"),
-            data=dict(description="Create a new task"),
+            data=dict(task_description="Create a new task"),
             follow_redirects=True
         )
         self.assertIn(b"Create a new task", response.data)
@@ -63,7 +63,7 @@ class TestCreate(TestBase):
 class TestUpdate(TestBase):
     def test_update_task(self):
         response = self.client.post(url_for("update", id=1),
-            data=dict(description="Update a task"),
+            data=dict(task_description="Update a task"),
             follow_redirects=True
         )
         self.assertIn(b"Update a task", response.data)
