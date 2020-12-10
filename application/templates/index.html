@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+{% block body %}
+
+<h2>Incomplete Task</h2>
+{% for task in all_tasks %}
+    {% if task.task_completion == False %}
+        <br>
+        {{ task.task_name }} <br> 
+        {{ task.task_description }}
+        <br>
+        <form action="{{ url_for('update', id=task.id) }}">
+            <input type=submit value="Update">
+        </form>
+        <form action="{{ url_for('delete', id=task.id) }}">
+            <input type=submit value="Delete">
+        </form>
+        <form action="{{ url_for('complete', id=task.id) }}">
+            <input type=submit value="complete">
+        </form>
+        <br>
+        <br>
+    {% endif %}
+{% endfor %}
+        
+<h2>Complete Task</h2>
+{% for task in all_tasks %}
+    {% if task.task_completion == True %}
+        <br>
+        {{ task.task_name }} <br> 
+        {{ task.task_description }}
+        <br>
+        <form action="{{ url_for('update', id=task.id) }}">
+            <input type=submit value="Update">
+        </form>
+        <form action="{{ url_for('delete', id=task.id) }}">
+            <input type=submit value="Delete">
+        </form>
+        <form action="{{ url_for('incomplete', id=task.id) }}">
+            <input type=submit value="incomplete">
+        </form>
+        <br>
+        <br>
+    {% endif %}
+{% endfor %}
+
+{% endblock body %}
+
+

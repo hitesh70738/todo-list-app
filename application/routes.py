@@ -1,46 +1,54 @@
 from application import app, db
 from application.models import Tasks
+from application.forms import TaskForm
+from flask import render_template, request, redirect, url_for
 
 @app.route("/")
 @app.route("/home")
 def home():
     all_tasks = Tasks.query.all()
     output = ""
-    for task in all_tasks:
-        output += task.task_name + " " + task.task_description + " <br>" 
-    return output
+    return render_template("index.html", title = "Home", all_tasks=all_tasks)
 
-@app.route('/add/<name>')
-def add(name):
-    new_task = Tasks(task_name = name, task_description = 'new task')
-    db.session.add(new_task)
-    db.session.commit()
-    return "Added new task to To Do List"
- 
-@app.route("/delete/<int:id>")
+@app.route('/create', methods=["GET","POST"])
+def create():
+    form = TaskForm() 
+    if request.method == "POST":
+        new_task=Tasks(task_name=form.task_name.data, task_description=form.task_description.data, task_completion=False)
+        db.session.add(new_task)
+        db.session.commit()
+        return redirect(url_for("home"))
+    return render_template("add.html", title="Create a task", form=form)
+
+@app.route("/delete/<int:id>", methods=["GET","POST"])
 def delete(id):
     task = Tasks.query.filter_by(id=id).first()
     db.session.delete(task)
     db.session.commit()
-    return f"Task {id} is now delted"
+    return redirect(url_for("home"))
 
-@app.route('/update/<task_name>/<task_desc>')
-def update(task_name, task_desc):
-    task = Tasks.query.filter_by(task_name=task_name).first()
-    task.task_description = task_desc
-    db.session.commit()
-    return f"Most recent task was updated with {task_desc}"
+@app.route('/update/<int:id>', methods=["GET", "POST"])
+def update(id):
+    form = TaskForm()
+    task = Tasks.query.filter_by(id=id).first()
+    if request.method == "POST":
+    #if form.validate_on_submit():
+        task.task_description = form.task_description.data
+        db.session.commit()
+        return redirect(url_for("home"))
 
-@app.route('/complete/<task_name>')
-def complete(task_name):
-    completed_task = Tasks.query.filter_by(task_name=task_name).first()
+    return render_template("update.html", form=form, title="Update Task", task=task)
+
+@app.route('/complete/<int:id>')
+def complete(id):
+    completed_task = Tasks.query.filter_by(id=id).first()
     completed_task.task_completion = True
     db.session.commit()
-    return "The task has now been completed"
+    return redirect(url_for("home"))
 
-@app.route('/incomplete/<task_name>')
-def incomplete(task_name):
-    incompleted_task = Tasks.query.filter_by(task_name=task_name).first()
+@app.route('/incomplete/<int:id>')
+def incomplete(id):
+    incompleted_task = Tasks.query.filter_by(id=id).first()
     incompleted_task.task_completion = False
     db.session.commit()
-    return "The task is incomplete"
+    return redirect(url_for("home"))
