@@ -7,7 +7,7 @@ from flask import render_template, request, redirect, url_for
 @app.route("/home")
 def home():
     all_tasks = Tasks.query.all()
-    output = ""
+    #output = ""
     return render_template("index.html", title = "Home", all_tasks=all_tasks)
 
 @app.route('/create', methods=["GET","POST"])
