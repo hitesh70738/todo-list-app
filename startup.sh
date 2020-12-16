@@ -1,5 +1,5 @@
 #!/bin/bash 
-cd /opt/to-do-list
+cd /opt/todo-list-app
 sudo mkdir /flask_project
 sudo chown -R /flask_project
 sudo python3 -m venv venv
